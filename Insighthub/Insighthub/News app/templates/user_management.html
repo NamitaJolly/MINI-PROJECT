@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .admin-dashboard-wrapper {
+        padding: 2rem;
+        background-color: #001220;
+        min-height: 100vh;
+        color: white;
+    }
+
+    .admin-dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .search-bar {
+        margin-bottom: 2rem;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .table th, .table td {
+        padding: 1rem;
+        text-align: left;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table th {
+        background-color: #d4db00;
+        color: #001220;
+        font-weight: bold;
+    }
+
+    .table td {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    .table tr:hover {
+        background-color: rgba(255, 204, 0, 0.1);
+    }
+
+    .btn {
+        margin-right: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .form-control:focus {
+        border-color: rgba(255, 204, 0, 0.8);
+        outline: none;
+        box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+</style>
+
+<div class="admin-dashboard-wrapper">
+    <div class="admin-dashboard-header">
+        <h1>User Management</h1>
+        <p>View, search, and filter registered users</p>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search users..." onkeyup="filterUsers()" class="form-control">
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+            {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <select onchange="assignRole('{{ user._id }}', this.value)" class="form-control">
+                        <option value="User " {% if user.role == 'User ' %}selected{% endif %}>User </option>
+                        <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-warning" onclick="editUser ('{{ user._id }}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteUser ('{{ user._id }}')">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filterUsers() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('userTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j]) {
+                    if (cells[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            rows[i].style.display = found ? "" : "none";
+        }
+    }
+
+    function editUser (userId) {
+        // Redirect to edit user page or open a modal for editing
+        window.location.href = `/edit-user/${userId}`;
+    }
+
+    function deleteUser (userId) {
+        if (confirm("Are you sure you want to delete this user?")) {
+            fetch(`/delete-user/${userId}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Reload the page to see the changes
+                    } else {
+                        alert("Error deleting user.");
+                    }
+                });
+        }
+    }
+
+    function assignRole(userId, role) {
+        fetch(`/assign-role/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ role: role })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Role updated successfully.");
+            } else {
+                alert("Error updating role.");
+            }
+        });
+    }
+</script>
+{% endblock %}

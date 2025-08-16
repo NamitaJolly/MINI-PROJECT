@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .quiz-container {
+        padding: 2rem;
+        background-color: #001220;
+        min-height: 100vh;
+        color: white;
+    }
+    .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    .question-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .options-list {
+        list-style: none;
+        padding-left: 0;
+    }
+    .option-item {
+        margin: 0.5rem 0;
+        padding: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .option-item:hover {
+        background: rgba(255, 204, 0, 0.2);
+    }
+    .option-item.selected {
+        background: rgba(255, 204, 0, 0.3);
+        border: 2px solid #ffcc00;
+    }
+    .timer {
+        font-size: 1.2rem;
+        color: #ffcc00;
+        padding: 0.5rem 1rem;
+        border: 1px solid #ffcc00;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h2>Daily Quiz</h2>
+        <div class="timer" id="timer">10:00</div>
+    </div>
+    
+    <form id="quiz-form" method="POST" action="{{ url_for('submit_quiz') }}">
+        <input type="hidden" name="quiz_id" value="{{ quiz_id }}">
+        
+        {% for mcq in mcqs %}
+        <div class="question-card">
+            <h4>{{ mcq.Question }}</h4>
+            <ul class="options-list">
+                {% for option in mcq.options %}
+                <li class="option-item">
+                    <label>
+                        <input type="radio" name="q{{ mcq.temp_id }}" value="{{ option }}" required>
+                        {{ option }}
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-warning w-100">Submit Quiz</button>
+    </form>
+</div>
+
+<script>
+    let timeLeft = 600; // 10 minutes in seconds
+    const timerElement = document.getElementById('timer');
+    
+    function updateTimer() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            document.getElementById('quiz-form').submit();
+        } else {
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+    }
+
+    // Ensure only one selection per question is highlighted
+    document.querySelectorAll('.options-list').forEach(optionList => {
+        optionList.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', function() {
+                // Remove 'selected' class from only the options in the current question
+                optionList.querySelectorAll('.option-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                this.closest('.option-item').classList.add('selected');
+            });
+        });
+    });
+
+    updateTimer();
+</script>
+{% endblock %}

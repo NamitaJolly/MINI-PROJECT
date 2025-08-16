@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .dashboard-wrapper {
+        padding: 2rem;
+        background-color: #001220;
+        min-height: 100vh;
+        color: white;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .feature-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 2rem;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progress-section {
+        background: rgba(0, 33, 71, 0.5);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .quiz-category {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .category-card {
+        background: rgba(255, 204, 0, 0.1);
+        border: 1px solid #ffcc00;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .news-category{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem; 
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <h1>Welcome, {{ session.name }}!</h1>
+        <p class="lead">Your Daily News & Learning Hub</p>
+        <div class="dashboard-nav">
+            <a href="{{ url_for('news') }}" class="btn btn-warning mx-2">
+                📰 Today's News
+            </a>
+            <input type="date" id="datePicker" class="mx-2">
+            <button onclick="filter_news_by_date()" class="btn btn-info mx-2">Choose Date</button>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger mx-2">
+                🚪 Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="feature-cards">
+        <div class="feature-card" onclick="location.href='#daily-quiz'">
+            <h3>📝 Daily Quiz</h3>
+            <p>Test your knowledge on today's news</p>
+            <div class="progress mt-3">
+                <div class="progress-bar" style="width: {{ (daily_quiz_user_score/10)*100 }}%">
+                    Your Score: {{ (daily_quiz_user_score/10)*100 }}%
+                  </div>
+                  
+            </div>
+            <a href="{{ url_for('daily_quiz') }}" class="btn btn-primary mt-3">Take Daily Quiz</a>
+        </div>
+
+        <div class="feature-card" onclick="location.href='#mock-test'">
+            <h3>📚 Mock Tests</h3>
+            <p>Test your knowledge on historical events & general knowledge</p>
+            <div class="progress mt-3">
+                <div class="progress-bar" style="width: {{ mock_test_user_attempts_percentage }}%">{{ mock_test_user_attempts }}/5 Tests Taken</div>
+            </div>
+            <a href="{{ url_for('mock_test') }}" class="btn btn-primary mt-3">Take Mock Test</a>
+        </div>
+
+        <div class="feature-card">
+            <label class="w-100" style="text-align: left; display: block; cursor: pointer;">
+                <h3>📈 Today's Economic Rates</h3>
+                <p>🧈Gold : {{ gold_rate | round(3) }}/g</p>
+                <p>🪨Silver : {{ silver_rate | round(3) }}/g</p>
+                <p>💰USD : {{ dollar_rate | round(3) }}INR</p>
+            
+            </label>
+        </div>
+        
+    </div>
+
+    <h3>News Categories</h3>
+    <div class="news-category">
+        {% if news_categories_input %}
+            {% for category in news_categories_input %}
+            <div class="category-card">
+                <h4>{{ category }}</h4> 
+                <button class="btn btn-warning"onclick="fetchNews('{{ category if category else 'default_category' }}')">
+                    
+                    Start News
+                </button>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-4">
+                <p>No news categories available</p>
+            </div>
+        {% endif %}
+    </div>
+    <!-- Update the "Recent Mock Tests" section in dashboard.html -->
+<div class="progress-section">
+    <h3>Check Your Today's Awareness</h3>
+    <div class="quiz-category">
+        <div class="category-card">
+            <h4>Politics</h4>
+            <p>Current Affairs Quiz</p>
+            <button class="btn btn-danger mt-2" 
+                    onclick="startCategoryQuiz('Politics')">
+                Start Quiz
+            </button>
+        </div>
+        <div class="category-card">
+            <h4>Technology</h4>
+            <p>Latest Tech Updates Quiz</p>
+            <button class="btn btn-danger mt-2" 
+                    onclick="startCategoryQuiz('Technology')">
+                Start Quiz
+            </button>
+        </div>
+        <div class="category-card">
+            <h4>Business</h4>
+            <p>Financial News Quiz</p>
+            <button class="btn btn-danger mt-2" 
+                    onclick="startCategoryQuiz('Business')">
+                Start Quiz
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+        function startCategoryQuiz(category) {
+            window.location.href = `/category-quiz?category=${encodeURIComponent(category)}`;
+        }
+
+        function fetchNews(category) {
+            window.location.href = `/filtered-news?category=${encodeURIComponent(category)}`;
+        }
+
+        function filter_news_by_date() {
+            let selectedDate = document.getElementById("datePicker").value;
+            if (!selectedDate) {
+                alert("Please select a date");
+                return;
+            }
+
+            let form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/date-filter";
+
+            let input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "selected_date";
+            input.value = selectedDate;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{% endblock %}

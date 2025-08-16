@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .edit-user-wrapper {
+        padding: 2rem;
+        background-color: #001220;
+        color: white;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .form-control:focus {
+        border-color: rgba(255, 204, 0, 0.8);
+        outline: none;
+        box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+
+    .btn {
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="edit-user-wrapper">
+    <h2>Edit User</h2>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" value="{{ user.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required>
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" name="role" class="form-control">
+                <option value="User " {% if user.role == 'User ' %}selected{% endif %}>User </option>
+                <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update User</button>
+        <a href="{{ url_for('user_management') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .results-container {
+        padding: 4rem 2rem;
+        background-color: #001220;
+        min-height: 100vh;
+        color: white;
+    }
+    .question-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    .option {
+        padding: 0.5rem;
+        margin: 0.3rem 0;
+        border-radius: 4px;
+    }
+    .user-answer {
+        background: #004085;
+        border: 1px solid #007bff;
+    }
+    .correct-answer {
+        background: #155724;
+        border: 1px solid #28a745;
+    }
+    .score-display {
+        font-size: 2.5rem;
+        color: #ffcc00;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+</style>
+
+<div class="results-container">
+    <div class="score-display">
+        Your Score: {{ score }}/{{ total }}
+    </div>
+    
+    <div class="answer-display">
+        <h3 class="text-center mb-4">Question Review</h3>
+        {% for question, user_answer, correct_answer in zip(questions, user_answers, correct_answers) %}
+        <div class="question-card">
+            <h4>Question {{ loop.index }}:</h4>
+            <p class="question-text">{{ question.text }}</p>
+            
+            <div class="options-list mt-3">
+                {% for option in question.options %}
+                <div class="option 
+                    {% if option == user_answer %}user-answer{% endif %}
+                    {% if option == correct_answer %}correct-answer{% endif %}">
+                    {{ option }}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="result-comparison mt-3">
+                <p class="mb-1">Your choice: <span class="text-primary">{{ user_answer }}</span></p>
+                <p>Correct answer: <span class="text-success">{{ correct_answer }}</span></p>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center">
+            <p>No questions to display</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-5">
+        <a href="{{ url_for('daily_quiz') }}" class="btn btn-primary mr-3">Try Again</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

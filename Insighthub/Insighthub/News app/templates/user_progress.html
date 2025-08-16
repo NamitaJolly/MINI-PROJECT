@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .progress-page {
+        padding: 2rem;
+        background-color: #001220;
+        color: white;
+        min-height: 100vh;
+    }
+
+    .chart-container {
+        position: relative;
+        margin-top: 2rem;
+        height: 40vh;
+        width: 80vw;
+    }
+
+    .suggestions {
+        margin-top: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 1.5rem;
+    }
+</style>
+
+<div class="progress-page">
+    <h1>Your Progress</h1>
+    <div class="chart-container">
+        <canvas id="progressChart"></canvas>
+    </div>
+
+    <div class="suggestions">
+        <h3>Suggestions for Improvement</h3>
+        <ul>
+            <li>Focus on areas where your accuracy is below 70%.</li>
+            <li>Try to take at least one mock test each week.</li>
+            <li>Review the questions you got wrong in previous quizzes.</li>
+            <li>Stay updated with daily news to improve your quiz performance.</li>
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Convert Jinja variables into JavaScript-friendly format
+        const labels = JSON.parse('{{ progress_data.weeks | tojson | safe }}');
+        const scores = JSON.parse('{{ progress_data.scores | tojson | safe }}');
+
+        const progressData = {
+            labels: labels,
+            datasets: [{
+                label: 'Test Scores',
+                data: scores,
+                backgroundColor: 'rgba(255, 204, 0, 0.5)',
+                borderColor: '#ffcc00',
+                borderWidth: 2,
+                fill: true
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: progressData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Test Date'
+                        }
+                    }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('progressChart'), config);
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #4A90E2;
+            margin: 0;
+            display: inline-block;
+            animation: fadeOut 2s forwards 2s; /* Fades out after 2s */
+        }
+
+        h1 span {
+            display: inline-block;
+            position: relative;
+        }
+
+        h1 .pop-i {
+            color: #e74c3c;
+            animation: letterPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) 2s forwards;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            color: #333;
+            margin-top: 10px;
+            animation: fadeOut 2s forwards 2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes letterPop {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(2.5) translateY(-30px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Redirect to login after 4 seconds
+            setTimeout(() => {
+                window.location.href = "{{ url_for('login') }}";
+            }, 4000); // 4 seconds delay
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span>I</span>
+            <span>n</span>
+            <span>s</span>
+            <span class="pop-i">i</span>
+            <span>g</span>
+            <span>h</span>
+            <span>t</span>
+            <span>H</span>
+            <span>u</span>
+            <span>b</span>
+        </h1>
+        <h2>Ignite Mind, Ignite Success</h2>
+    </div>
+</body>
+</html>

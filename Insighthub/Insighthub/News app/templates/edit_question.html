@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .edit-question-wrapper {
+        padding: 2rem;
+        background-color: #001220;
+        color: white;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .form-control:focus {
+        border-color: rgba(255, 204, 0, 0.8);
+        outline: none;
+        box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+
+    .btn {
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="edit-question-wrapper">
+    <h2>Edit Question</h2>
+
+    <form method="POST">
+        <input type="hidden" name="question_id" value="{{ question._id }}">
+        <div class="form-group">
+            <label for="question">Question</label>
+            <input type="text" id="question" name="question" class="form-control" value="{{ question.MCQ.question }}" required>
+        </div>
+        <div class="form-group">
+            <label for="options">Options (comma-separated)</label>
+            <input type="text" id="options" name="options" class="form-control" value="{{ question.MCQ.options | join(', ') }}" required>
+        </div>
+        <div class="form-group">
+            <label for="correct_answer">Correct Answer</label>
+            <input type="text" id="correct_answer" name="correct_answer" class="form-control" value="{{ question.MCQ.correct_answer }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Question</button>
+        <a href="{{ url_for('quiz_management') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

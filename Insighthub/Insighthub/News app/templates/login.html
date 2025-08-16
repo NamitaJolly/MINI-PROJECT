@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2 class="text-center mb-4">{% block title %}Login{% endblock %}</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">{% block button %}Login{% endblock %}</button>
+        </form>
+        <div class="text-center mt-3">
+            {% block link %}
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

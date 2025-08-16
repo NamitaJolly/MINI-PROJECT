@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .results-container {
+        padding: 2rem;
+        background-color: #001220;
+        min-height: 100vh;
+        color: white;
+    }
+    .score-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .answer-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+    }
+    .answer-table th, .answer-table td {
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: left;
+    }
+    .correct {
+        color: #28a745; /* Green */
+    }
+    .incorrect {
+        color: #dc3545; /* Red */
+    }
+</style>
+
+<div class="results-container">
+    <h2>Mock Test Results</h2>
+
+    <div class="score-card">
+        <h3>Your Score: {{ score }} / {{ total }}</h3>
+    </div>
+
+    <table class="answer-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Question</th>
+                <th>Your Answer</th>
+                <th>Correct Answer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user_answer, correct_answer, question in zipped_data %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ question }}</td>
+                <td class="{% if user_answer == correct_answer %}correct{% else %}incorrect{% endif %}">
+                    {{ user_answer if user_answer else 'Not Answered' }}
+                </td>
+                <td class="correct">{{ correct_answer }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
+    <a href="{{ url_for('mock_test') }}" class="btn btn-warning mt-3">Try Again</a>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-info mt-3">Home</a>
+</div>
+{% endblock %}

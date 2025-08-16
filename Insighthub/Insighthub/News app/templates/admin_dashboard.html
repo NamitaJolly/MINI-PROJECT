@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .admin-dashboard-wrapper {
+        padding: 2rem;
+        background-color: #001220;
+        min-height: 100vh;
+        color: white;
+    }
+
+    .admin-dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .admin-feature-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .admin-feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 2rem;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-feature-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .admin-section {
+        background: rgba(0, 33, 71, 0.5);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .admin-category-card {
+        background: rgba(255, 204, 0, 0.1);
+        border: 1px solid #ffcc00;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+</style>
+
+<div class="admin-dashboard-wrapper">
+    <div class="admin-dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p class="lead">Manage Users, Content, and Analytics</p>
+        <div class="admin-dashboard-nav">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger mx-2">
+                🚪 Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-feature-cards">
+        <div class="admin-feature-card" onclick="location.href='{{ url_for('user_management') }}'">
+            <h3>👥 User Management</h3>
+            <p>View, search, and filter registered users</p>
+            <a href="{{ url_for('user_management') }}" class="btn btn-primary mt-3">Manage Users</a>
+        </div>
+
+        <div class="admin-feature-card" onclick="location.href='{{ url_for('news_management') }}'">
+            <h3>📰 News & Content Management</h3>
+            <p>Add/edit/delete news articles and manage content</p>
+            <a href="{{ url_for('news_management') }}" class="btn btn-primary mt-3">Manage News</a>
+        </div>
+
+        <div class="admin-feature-card" onclick="location.href='{{ url_for('quiz_management') }}'">
+            <h3>📝 Quiz Management</h3>
+            <p>Create, edit, and delete quiz questions</p>
+            <a href="{{ url_for('quiz_management') }}" class="btn btn-primary mt-3">Manage Quizzes</a>
+        </div>
+
+        
+    </div>
+
+    
+</div>
+
+<script>
+    // You can add any necessary JavaScript functions here
+</script>
+
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    body {
+        background-color: #002147;
+        color: white;
+        text-align: center;
+    }
+
+    .news-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .news-card {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        width: 350px;
+        min-height: 300px;
+        padding: 1.5rem;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .news-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .card-title {
+        color: #ffcc00;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-text {
+        color: #f0f0f0;
+        font-size: 1rem;
+    }
+
+    .btn-read {
+        background: #ffcc00;
+        color: black;
+        border: none;
+        transition: all 0.3s ease;
+        padding: 0.375rem 1rem;
+        font-weight: bold;
+        border-radius: 6px;
+    }
+
+    .btn-read:hover {
+        background: #ffdb4d;
+        color: black;
+    }
+
+    .category-text {
+        color: #ffcc00;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    #loading {
+        text-align: center;
+        padding: 2rem;
+        display: none;
+    }
+
+    #news-error {
+        display: none;
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    @media (max-width: 768px) {
+        .news-card {
+            width: 90%; /* Make cards full width on smaller screens */
+        }
+    }
+</style>
+
+<!-- Loading Indicator -->
+<div id="loading">
+    <div class="spinner-border text-warning" style="width: 3rem; height: 3rem;" role="status" aria-live="polite">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Fetching latest news...</p>
+</div>
+
+<!-- Error Display -->
+<div id="news-error" class="alert alert-danger" role="alert"></div>
+
+<h2 class="text-center mb-4" style="color: white;">Today's News</h2>
+
+<div class="news-container" id="news-container">
+    {% if news %}
+        {% for article in news %}
+        <div class="news-card">
+            <h5 class="card-title">{{ article.title }}</h5>
+            <p class="card-text"> {{ article.summary }}</p>
+            <div>
+                <p class="category-text mb-2">Categories: {{ article['News Category'] | join(', ') }}</p>
+                <a href="{{ article.link }}" target="_blank" class="btn btn-read btn-sm">
+                    Read Original ↗
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center" style="color: white;">No news articles available.</p>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loading = document.getElementById('loading');
+        const errorDiv = document.getElementById('news-error');
+        const container = document.getElementById('news-container');
+        
+        // Show loading state
+        loading.style.display = 'block';
+        container.style.opacity = '0.5';
+
+        // Check if news data is empty
+        if (document.querySelectorAll('.news-card').length === 0) {
+            errorDiv.textContent = 'Failed to load news articles. Please try again later.';
+            errorDiv.style.display = 'block';
+        }
+        
+        // Hide loading state after content loads
+        window.addEventListener('load', () => {
+            loading.style.display = 'none';
+            container.style.opacity = '1';
+        });
+    });
+</script>
+{% endblock %}

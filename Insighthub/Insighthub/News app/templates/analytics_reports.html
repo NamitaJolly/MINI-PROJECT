@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .analytics-report {
+        padding: 2rem;
+        background-color: #001220;
+        color: white;
+    }
+
+    .report-card {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .chart-container {
+        margin-top: 2rem;
+    }
+</style>
+
+<div class="analytics-report">
+    <h2>Analytics & Reports</h2>
+
+    <div class="report-card">
+        <h4>Total Logins: {{ data.total_logins }}</h4>
+    </div>
+    <div class="report-card">
+        <h4>Total News Views: {{ data.total_news_views }}</h4>
+    </div>
+    <div class="report-card">
+        <h4>Total Quiz Attempts: {{ data.total_quiz_attempts }}</h4>
+    </div>
+
+    <h3>Trending Topics</h3>
+    <ul>
+        {% for topic in data.trending_topics %}
+            <li>{{ topic.title }} - Views: {{ topic.views }}</li>
+        {% else %}
+            <li>No trending topics available.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Quiz Participation</h3>
+    <div class="chart-container">
+        <canvas id="quizParticipationChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('quizParticipationChart').getContext('2d');
+
+    // Correct way: JSON string is wrapped in quotes
+    const quizData = JSON.parse('{{ data.quiz_participation | tojson | safe }}');
+
+    const quizLabels = quizData.map(q => q.quiz_id);
+    const quizAttempts = quizData.map(q => q.attempts);
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: quizLabels,
+        datasets: [{
+          label: 'Quiz Attempts',
+          data: quizAttempts,
+          backgroundColor: 'rgba(255, 204, 0, 0.5)',
+          borderColor: 'rgba(255, 204, 0, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  });
+</script>
+
+
+
+
+{% endblock %}
