@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import bcrypt
-from flask_limiter import Limitern
+from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import json
 import uuid
@@ -1045,4 +1045,5 @@ def zip_filter(list1, list2):
 
 if __name__ == "__main__":
     app.run(debug=False)
+
 
